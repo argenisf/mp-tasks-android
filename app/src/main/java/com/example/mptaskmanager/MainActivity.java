@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,11 +35,16 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar mProgress;
     SharedPreferences sharedPref;
     String customServerURL = "http://10.0.0.228:8888/mp-server-side-training/";
+    public static String MPToken = "5796d9a5a728ba2493188cef50389c61";
+    private MixpanelAPI mixpanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mixpanel = MixpanelAPI.getInstance(this, MPToken);
+        mixpanel.track("App Launch");
 
         mContext = this;
         demoAuthBtn = (Button) findViewById(R.id.demoAuthBtn);
@@ -108,6 +114,24 @@ public class MainActivity extends AppCompatActivity {
                         editor.putString("email",mUser.getEmail());
                         editor.commit();
 
+                        //track to Mixpanel
+                        if(!mUser.getEmail().equals("demo@mixpanel.com")){
+                            if(response.getString("message").contains("New account")){
+                                //response for new users
+                                mixpanel.track("Signup");
+                                mixpanel.alias(mUser.getEmail(), null);
+                                mixpanel.getPeople().identify(mixpanel.getDistinctId());
+                            }else{
+                                mixpanel.identify(mUser.getEmail());
+                                mixpanel.getPeople().identify(mUser.getEmail());
+                                mixpanel.track("Login");
+                            }
+
+                            //setup profile
+                            mixpanel.getPeople().set("$email",mUser.getEmail());
+                            mixpanel.flush();
+                        }
+
                         Intent intent = new Intent(mContext, MainListView.class);
                         startActivity(intent);
                     }
@@ -118,6 +142,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }// end of onCreate
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        JSONObject eventProps = new JSONObject();
+        try {
+            eventProps.put("screen", "Authentication");
+
+            JSONObject superProps = new JSONObject();
+            superProps.put("demo",false);
+            if(mUser.getEmail().contains("@mixpanel.com")){
+                if(mUser.getEmail().equals("demo@mixpanel.com")){
+                    superProps.put("demo",true);
+                }
+            }
+            mixpanel.registerSuperProperties(superProps);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        mixpanel.track("Screen Loaded", eventProps);
+    }
+
 
     private void setActiveRequest(){
         activeRequest = true;

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,12 +45,15 @@ public class MainListView extends AppCompatActivity {
     RecyclerViewAdapter pendingAdapter;
     RecyclerViewAdapter completedAdapter;
 
+    private MixpanelAPI mixpanel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_list_view);
         mContext = this;
+        mixpanel = MixpanelAPI.getInstance(this,MainActivity.MPToken);
 
         mMainForm = (ConstraintLayout) findViewById(R.id.mainFormLayout);
         mLogOut = (Button) findViewById(R.id.btnLogOut);
@@ -132,6 +136,28 @@ public class MainListView extends AppCompatActivity {
 
     }//end of onCreate
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        JSONObject eventProps = new JSONObject();
+        try {
+            eventProps.put("screen", "Home Screen");
+
+            JSONObject superProps = new JSONObject();
+            superProps.put("demo",false);
+            if(mUser.getEmail().contains("@mixpanel.com")){
+                if(mUser.getEmail().equals("demo@mixpanel.com")){
+                    superProps.put("demo",true);
+                }
+            }
+            mixpanel.registerSuperProperties(superProps);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        mixpanel.track("Screen Loaded", eventProps);
+    } //onResume
+
     private void receivedTasksForUser(JSONObject response){
         try {
             if(response.getBoolean("status") == true) {
@@ -158,6 +184,7 @@ public class MainListView extends AppCompatActivity {
         mBtnNewTask.setEnabled(true);
         try {
             if(response.getBoolean("status") == true) {
+                mixpanel.track("Task Created");
                 Log.v(mState.logTag,"new task created");
                 Log.v(mState.logTag,response.toString());
                 JSONObject task = response.getJSONObject("task");
@@ -180,6 +207,7 @@ public class MainListView extends AppCompatActivity {
     private void receivedDeleteTaskRequest(JSONObject response){
         try {
             if(response.getBoolean("status") == true) {
+                mixpanel.track("Task Deleted");
                 Log.v(mState.logTag,"task deleted");
                 Log.v(mState.logTag,response.toString());
                 JSONObject task = response.getJSONObject("task");
@@ -209,6 +237,7 @@ public class MainListView extends AppCompatActivity {
     private void receivedUpdateTaskRequest(JSONObject response){
         try {
             if(response.getBoolean("status") == true) {
+                mixpanel.track("Task Updated");
                 Log.v(mState.logTag,"task updated");
                 Log.v(mState.logTag,response.toString());
                 JSONObject task = response.getJSONObject("task");
@@ -296,6 +325,13 @@ public class MainListView extends AppCompatActivity {
     public void onBackPressed() { }
 
     public void activityLogOut(){
+        //let's only reset if the user was not logged in as demo
+        if(!mUser.getEmail().equals("demo@mixpanel.com")){
+            mixpanel.track("Logout");
+            mixpanel.flush();
+            mixpanel.reset();
+        }
+
         // Change saved preferences
         SharedPreferences sharedPref = mContext.getSharedPreferences("user_auth", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
