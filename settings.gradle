@@ -1,0 +1,2 @@
+rootProject.name='MPTaskManager'
+include ':app'
