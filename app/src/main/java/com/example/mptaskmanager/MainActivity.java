@@ -20,8 +20,12 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Formatter;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(mUser.getState() == 1){
             //user already logged in, let's go to the activity
+            createOrUpdateProfile();
             Intent intent = new Intent(mContext, MainListView.class);
             startActivity(intent);
         }
@@ -128,8 +133,7 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             //setup profile
-                            mixpanel.getPeople().set("$email",mUser.getEmail());
-                            mixpanel.flush();
+                            createOrUpdateProfile();
                         }
 
                         Intent intent = new Intent(mContext, MainListView.class);
@@ -163,6 +167,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mixpanel.track("Screen Loaded", eventProps);
+    }
+
+    private void createOrUpdateProfile(){
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        df.setTimeZone(tz);
+        String nowAsISO = df.format(new Date());
+
+        mixpanel.getPeople().set("$email",mUser.getEmail());
+        mixpanel.getPeople().setOnce("$created",nowAsISO);
+        mixpanel.getPeople().set("Last App Activity", nowAsISO);
+        mixpanel.flush();
     }
 
 

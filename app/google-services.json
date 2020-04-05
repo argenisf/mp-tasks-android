@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "177191521436",
+    "firebase_url": "https://androidsession-ece97.firebaseio.com",
+    "project_id": "androidsession-ece97",
+    "storage_bucket": "androidsession-ece97.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:177191521436:android:6ce2e8408c1bd40b",
+        "android_client_info": {
+          "package_name": "com.argenis.example"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "177191521436-48r0bldv93hf3os3j379u36k55s6v0o8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBB2oMzO8FhZT2SU5KQWheTcC9ClWVbJl4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "177191521436-48r0bldv93hf3os3j379u36k55s6v0o8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:177191521436:android:4fb991f49652d2ce",
+        "android_client_info": {
+          "package_name": "com.example.argenisferrer.androidpushsession"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "177191521436-48r0bldv93hf3os3j379u36k55s6v0o8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBB2oMzO8FhZT2SU5KQWheTcC9ClWVbJl4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "177191521436-48r0bldv93hf3os3j379u36k55s6v0o8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:177191521436:android:e7b2fbe9dc3854b6be7159",
+        "android_client_info": {
+          "package_name": "com.example.mptaskmanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "177191521436-48r0bldv93hf3os3j379u36k55s6v0o8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBB2oMzO8FhZT2SU5KQWheTcC9ClWVbJl4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "177191521436-48r0bldv93hf3os3j379u36k55s6v0o8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
