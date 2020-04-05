@@ -170,15 +170,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createOrUpdateProfile(){
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-        df.setTimeZone(tz);
-        String nowAsISO = df.format(new Date());
+        if(mUser.getEmail().contains("mixpanel.com") && !mUser.getEmail().equals("demo@mixpanel.com")) {
+            TimeZone tz = TimeZone.getTimeZone("UTC");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+            df.setTimeZone(tz);
+            String nowAsISO = df.format(new Date());
 
-        mixpanel.getPeople().set("$email",mUser.getEmail());
-        mixpanel.getPeople().setOnce("$created",nowAsISO);
-        mixpanel.getPeople().set("Last App Activity", nowAsISO);
-        mixpanel.flush();
+            mixpanel.getPeople().identify(mixpanel.getDistinctId());
+            mixpanel.getPeople().set("$email", mUser.getEmail());
+            mixpanel.getPeople().setOnce("$created", nowAsISO);
+            mixpanel.getPeople().set("Last App Activity", nowAsISO);
+            mixpanel.flush();
+        }
     }
 
 
